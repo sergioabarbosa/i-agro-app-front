@@ -1,13 +1,22 @@
-// App.js
 import React from 'react';
+import { NavigationContainer } from '@react-navigation/native'; // Importe o NavigationContainer
 import { View, StyleSheet } from 'react-native';
-import ProductsComponents from './src/components/ProductsComponent';
+import { AuthProvider } from './src/Contexts/Auth';
+import LoginComponent from './src/components/LoginComponente';
+import ProductsComponent from './src/components/ProductsComponent';
+import UsersComponent from './src/components/UsersComponent';
 
 const App = () => {
   return (
-    <View style={styles.container}>
-      <ProductsComponents />
-    </View>
+    <NavigationContainer> {/* Envolve toda a sua aplicação com NavigationContainer */}
+      <AuthProvider>
+        <View style={styles.container}>
+          <LoginComponent />
+          <ProductsComponent />
+          <UsersComponent />
+        </View>
+      </AuthProvider>
+    </NavigationContainer>
   );
 };
 
