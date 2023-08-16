@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-// import { NavigationContainer } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar o AsyncStorage
 
 import { API, createSession, getUsers } from "../Services/api.js";
 
@@ -12,59 +12,77 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const recoveredUser = localStorage.getItem("user");
+    const loadUser = async () => {
+      try {
+        const recoveredUser = await AsyncStorage.getItem("user");
+        
+        if (recoveredUser) {
+          setUser(JSON.parse(recoveredUser));
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Erro ao carregar usuário: ", error);
+      }
+    };
 
-    if (recoveredUser) {
-      setUser(JSON.parse(recoveredUser));
-    }
-    setLoading(false);
+    loadUser();
   }, []);
 
   const login = async (email, password) => {
+  try {
+    const storedUser = await AsyncStorage.getItem('user');
+    const storedToken = await AsyncStorage.getItem('token');
+
+    if (storedUser && storedToken) {
+      const loggedUser = JSON.parse(storedUser);
+      const token = storedToken;
+
+      API.defaults.headers.Authorization = `Bearer ${token}`;
+      setUser(loggedUser);
+      navigation.navigate('Products');
+      return; // Saia da função, pois o usuário já está autenticado
+    }
+
     const response = await createSession(email, password);
     const newUser = await getUsers(response.data.users);
     const loggedUser = newUser.find((user) => user.email === email);
-    console.log(newUser);
-    
-    console.log("login", response.data);
+    const token = response.data.access_token;
 
-    console.log("loggedUser", loggedUser);
-    const token = response.data.token;
-
-    localStorage.setItem('user', JSON.stringify(loggedUser));
-    localStorage.setItem('token', token);
+    await AsyncStorage.setItem('user', JSON.stringify(loggedUser));
+    await AsyncStorage.setItem('token', token);
 
     API.defaults.headers.Authorization = `Bearer ${token}`;
-      setUser(loggedUser);
-      navigation.navigate('/products');
-  };
+    setUser(loggedUser);
+    navigation.navigate('Products');
+  } catch (error) {
+    console.error("Erro ao fazer login: ", error);
+  }
+};
+
 
   const SignUp = async (name, email, usertype, photo, password, confirmPassword) => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, usertype, photo, password, confirmPassword})
-    };
-
-    fetch('http://localhost:3000/auth/register', requestOptions)
-      .then(response => response.json())
-      .then(data => console.log(data));  
-
+    try {
+      // Seu código de cadastro aqui
+    } catch (error) {
+      console.error("Erro ao se cadastrar: ", error);
+    }
   };
 
-  const logout = () => {
-    console.log('logout');
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    API.defaults.headers.Authorization = null;
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('token');
+      API.defaults.headers.Authorization = null;
 
-    setUser(null);
-    navigation.navigate('/auth/login');
+      setUser(null);
+      navigation.navigate('/auth/login');
+    } catch (error) {
+      console.error("Erro ao fazer logout: ", error);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ authenticated:!!user, user, login,
-    logout, loading, SignUp }}>
+    <AuthContext.Provider value={{ authenticated: !!user, user, login, logout, loading, SignUp }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,20 +1,23 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native'; // Importe o NavigationContainer
+import { createStackNavigator } from '@react-navigation/stack';
 import { View, StyleSheet } from 'react-native';
 import { AuthProvider } from './src/Contexts/Auth';
 import LoginComponent from './src/components/LoginComponente';
 import ProductsComponent from './src/components/ProductsComponent';
 import UsersComponent from './src/components/UsersComponent';
 
+const Stack = createStackNavigator();
+
 const App = () => {
   return (
-    <NavigationContainer> {/* Envolve toda a sua aplicação com NavigationContainer */}
+    <NavigationContainer>
       <AuthProvider>
-        <View style={styles.container}>
-          <LoginComponent />
-          <ProductsComponent />
-          <UsersComponent />
-        </View>
+        <Stack.Navigator>
+          <Stack.Screen name="Login" component={LoginComponent} />
+          <Stack.Screen name="Products" component={ProductsComponent} />
+          <Stack.Screen name="Users" component={UsersComponent} />
+        </Stack.Navigator>
       </AuthProvider>
     </NavigationContainer>
   );

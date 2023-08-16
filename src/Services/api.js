@@ -40,7 +40,7 @@ export const getUser = async (token, id) => {
 getUser().then((user) => console.log(user)); 
 
 export const updateUser = async (token, id, name, email, password) => {
-  const request = await API.put(`/users/${id}`, { name, email, password }, {
+  const request = await API.patch(`/users/${id}`, { name, email, password }, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -63,7 +63,7 @@ export const updateUserAccess = async (token) => {
 };
 
 export const getProducts = async (token, id) => {
-  const request = await API.get(`/products/`, {
+  const request = await API.get(`/products`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
