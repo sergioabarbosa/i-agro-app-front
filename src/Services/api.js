@@ -28,27 +28,27 @@ export const getUsers = async (token) => {
 };
 getUsers().then((users) => console.log(users));
 
-export const getUser = async (token, id) => {
-  const request = await API.get(`/users/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  console.log(request.data);
-  return request.data;
-};
-getUser().then((user) => console.log(user)); 
+// export const getUser = async (token, id) => {
+//   const request = await API.get(`/users/${id}`, {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   });
+//   console.log(request.data);
+//   return request.data;
+// };
+// getUser().then((user) => console.log(user)); 
 
-export const updateUser = async (token, id, name, email, password) => {
-  const request = await API.patch(`/users/${id}`, { name, email, password }, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  console.log(request.data);
-  return request.data;
-}
-updateUser().then((user) => console.log(user));
+// export const updateUser = async (token, id, name, email, password) => {
+//   const request = await API.patch(`/users/${id}`, { name, email, password }, {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   });
+//   console.log(request.data);
+//   return request.data;
+// }
+// updateUser().then((user) => console.log(user));
 
 export const updateUserAccess = async (token) => {
   const user = JSON.parse(localStorage.getItem("user"));

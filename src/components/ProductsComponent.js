@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, Dimensions } from 'react-native'; // Importe Dimensions
 import axios from 'axios';
 
 const ProductsComponent = () => {
@@ -26,21 +26,25 @@ const ProductsComponent = () => {
         {data.map(item => (
           <View key={item.id} style={styles.productCard}>
             <Image source={{ uri: item.image }} style={styles.productImage} />
-            <Text style={styles.productName}>{item.name}</Text>
-            <Text style={styles.productDescription}>{item.description}</Text>
-            <Text style={styles.productInfo}>Categoria: {item.category}</Text>
-            <Text style={styles.productInfo}>Disponível: {item.available}</Text>
-            <Text style={styles.productInfo}>Marca: {item.brand}</Text>
-            <Text style={styles.productPrice}>Preço: ${item.price}</Text>
-            <Text style={styles.productInfo}>Quantidade: {item.quantity}</Text>
-            <Text style={styles.productInfo}>ID do Produto: {item.id}</Text>
-            <Text style={styles.productInfo}>ID do Usuário: {item.userId}</Text>
+            <View style={styles.productTextBackground}> {/* Adicione este bloco para o fundo dos textos */}
+              <Text style={styles.productName}>{item.name}</Text>
+              <Text style={styles.productDescription}>{item.description}</Text>
+              <Text style={styles.productInfo}>Categoria: {item.category}</Text>
+              <Text style={styles.productInfo}>Disponível: {item.available}</Text>
+              <Text style={styles.productInfo}>Marca: {item.brand}</Text>
+              <Text style={styles.productPrice}>Preço: ${item.price}</Text>
+              <Text style={styles.productInfo}>Quantidade: {item.quantity}</Text>
+              <Text style={styles.productInfo}>ID do Produto: {item.id}</Text>
+              <Text style={styles.productInfo}>ID do Usuário: {item.userId}</Text>
+            </View>
           </View>
         ))}
       </ScrollView>
     </View>
   );
 };
+
+const windowWidth = Dimensions.get('window').width; // Obtenha a largura da janela
 
 const styles = StyleSheet.create({
   container: {
@@ -61,9 +65,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 16,
-    marginBottom: 16,
+    marginBottom: 8,
     elevation: 4,
-    width: '90%',
+    width: windowWidth * 0.9, // Use a largura da janela multiplicada por 90%
     alignItems: 'center',
   },
   productName: {
@@ -85,11 +89,19 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   productImage: {
-    width: '100%',
+    width: '60%',
     height: 200,
+    padding: 8,
     resizeMode: 'cover',
     borderRadius: 8,
-    marginTop: 8,
+    marginBottom: 8,
+  },
+  productTextBackground: {
+    backgroundColor: 'rgba(200, 258, 258, 0.8)', // Cor de fundo semi-transparente
+    padding: 8,
+    borderRadius: 6,
+    width: '100%',
+    alignItems: 'center',
   },
 });
 

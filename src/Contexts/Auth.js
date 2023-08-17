@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const navigation = useNavigation();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -28,7 +29,7 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
-  const login = async (email, password) => {
+  const checkAuthAndNavigate = async () => {
   try {
     const storedUser = await AsyncStorage.getItem('user');
     const storedToken = await AsyncStorage.getItem('token');
@@ -40,9 +41,20 @@ export const AuthProvider = ({ children }) => {
       API.defaults.headers.Authorization = `Bearer ${token}`;
       setUser(loggedUser);
       navigation.navigate('Products');
-      return; // Saia da função, pois o usuário já está autenticado
     }
 
+    setAuthChecked(true); // Marca a verificação de autenticação como concluída
+  } catch (error) {
+    console.error("Erro ao verificar autenticação: ", error);
+  }
+};
+
+useEffect(() => {
+  checkAuthAndNavigate();
+}, []);
+
+  const login = async (email, password) => {
+   try {
     const response = await createSession(email, password);
     const newUser = await getUsers(response.data.users);
     const loggedUser = newUser.find((user) => user.email === email);
